@@ -1,8 +1,10 @@
+#%% SETUP
 # Set the directory path where the CSV files are located
 directory = "Set the directory path where the CSV files are located"
 
 sample = directory.split('/')[-1]
 
+#%% DEFINITIONS
 def plotting(directory,sample):
     import matplotlib.pyplot as plt
     from matplotlib import cm
@@ -57,7 +59,7 @@ def plotting(directory,sample):
     plt.show()
 
 def degradation(directory,sample):
-    import pandas as pd
+    import pandas as pdA
     import numpy as np
     import re
 
@@ -74,10 +76,7 @@ def degradation(directory,sample):
         # Find the reference absorbance (time = 000)
         ref_absorbance = group[group['time'] == 0]['absorbance'].iloc[0]
 
-        # Calculate the difference in absorbance: reference minus each row
-        group['absorbance_diff'] = ref_absorbance - group['absorbance']
-        # Normalize the difference by dividing by the time value
-        group['normalized_diff'] = 100* (group['absorbance_diff'] / group['time'])
+        group['normalized_diff'] = (group['absorbance'] / ref_absorbance)
         # Handle division by zero by setting those values to NaN or zero
         group['normalized_diff'].replace([float('inf'), -float('inf')], np.nan, inplace=True)
 
@@ -110,7 +109,7 @@ def degradation(directory,sample):
     # Adding title and labels
     # plt.title('Normalized Absorbance Difference Over Time')
     plt.xlabel('Time (min)')
-    plt.ylabel('Degradation Rate (%)')
+    plt.ylabel('C$_t$/C$_0$')
     plt.legend()
 
     plt.tight_layout()
@@ -118,6 +117,7 @@ def degradation(directory,sample):
     plt.show()
 
 
+#%% DATA WRANGLING
 import csv
 import os
 import pandas as pd
